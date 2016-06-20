@@ -1,4 +1,4 @@
-// ssaview is a small utlity that renders SSA code alongside input Go code
+// ssaviewSignature renders the signature for a go function into SSA.
 //
 // Runs via HTTP on :8080 or the PORT environment variable
 package main
@@ -57,11 +57,31 @@ func toSSA(source io.Reader, fileName, packageName string, debug bool) ([]byte, 
 			funcs = append(funcs, obj)
 		}
 	}
-	// sort by Pos()
+
 	sort.Sort(funcs)
 	for _, f := range funcs {
-		ssa.WriteFunction(out, mainPkg.Func(f.Name()))
+		packageFun := mainPkg.Func(f.Name())
+		bb := packageFun.Blocks
+		for _, block := range bb {
+			for _, instr := range block.Instrs {
+				var callCom ssa.CallCommon
+				switch instrType := instr.(type) {
+				case *ssa.Call:
+					callCom = instrType.Call
+				case *ssa.Go:
+					callCom = instrType.Call
+				case *ssa.Defer:
+					callCom = instrType.Call
+				}
+				if callCom.Value != nil {
+					out.WriteString(" Signature: " + callCom.Value.Name() + " " + callCom.Signature().String() + "\n")
+				}
+			}
+		}
+		//	mainPkg.Func(f.Name()).WriteTo(out)
+
 	}
+
 	return out.Bytes(), nil
 }
 
