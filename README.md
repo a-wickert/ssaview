@@ -1,6 +1,5 @@
 #ssaview
 -------
-TODO: provide new heroku url
 
 ssaview is a small utlity that renders SSA code alongside input Go code
 
@@ -21,7 +20,8 @@ Screenshot:
 
 ## TODO
 
-* Logging not via fmt
-* Fix that the stuff is shown twice
-* Show error messages
-* Show value of checkbox after rendering
+[] Logging not via fmt
+[] Fix that the stuff is shown twice
+[] Show error messages
+[] Show value of checkbox after rendering
+[] Provide heroku link
