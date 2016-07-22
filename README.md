@@ -17,7 +17,7 @@ License: ISC
 ```
 
 Screenshot:
-![Example screenshot](https://github.com/tmc/ssaview/raw/master/.screenshot.png)
+![Example screenshot](https://github.com/akwick/ssaview/raw/master/.preview.png)
 
 ## TODO
 
