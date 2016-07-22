@@ -1,4 +1,4 @@
-ssaview
+#ssaview
 -------
 TODO: provide new heroku url
 
@@ -13,8 +13,15 @@ License: ISC
   $ go install github.com/a-wickert/ssaview
   $ Optional: which ssaview should show you: $GOPATH/bin/ssaview
   $ ssaview &
-  Than open localhost:8080
+  open localhost:8080
 ```
 
 Screenshot:
 ![Example screenshot](https://github.com/tmc/ssaview/raw/master/.screenshot.png)
+
+## TODO
+
+* Logging not via fmt
+* Fix that the stuff is shown twice
+* Show error messages
+* Show value of checkbox after rendering

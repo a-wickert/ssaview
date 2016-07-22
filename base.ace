@@ -1,0 +1,15 @@
+= doctype html
+html lang=en
+  head
+    meta charset=utf-8
+    meta name="viewport" content="width=device-width, initial-scale=1"
+    title SSA View improved
+    = css
+      h1 { color: blue; }
+
+    link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css"
+
+  body
+    h1.text-info Base Template : {{.Expl}}
+    #container.wrapper
+      = yield container
