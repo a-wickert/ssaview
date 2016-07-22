@@ -20,8 +20,8 @@ Screenshot:
 
 ## TODO
 
-- [] Logging not via fmt
-- [] Fix that the stuff is shown twice
-- [] Show error messages
-- [] Show value of checkbox after rendering
-- [] Provide heroku link
+- [ ] Logging not via fmt
+- [ ] Fix that the stuff is shown twice
+- [ ] Show error messages
+- [ ] Show value of checkbox after rendering
+- [ ] Provide heroku link
