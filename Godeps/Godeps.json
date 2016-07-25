@@ -1,30 +1,36 @@
 {
-	"ImportPath": "github.com/a-wickert/ssaview",
-	"GoVersion": "go1.4.2",
+	"ImportPath": "github.com/akwick/ssaview",
+	"GoVersion": "go1.6",
+	"GodepVersion": "v74",
 	"Deps": [
 		{
+			"ImportPath": "github.com/yosssi/ace",
+			"Comment": "v0.0.4-51-g71afeb7",
+			"Rev": "71afeb714739f9d5f7e1849bcd4a0a5938e1a70d"
+		},
+		{
 			"ImportPath": "golang.org/x/tools/go/ast/astutil",
-			"Rev": "1330b289ad6d59313d86910fa35d5022cd871e7f"
+			"Rev": "d4a8e583a10c1e702d1accc9e66c104f992115c8"
 		},
 		{
 			"ImportPath": "golang.org/x/tools/go/buildutil",
-			"Rev": "1330b289ad6d59313d86910fa35d5022cd871e7f"
-		},
-		{
-			"ImportPath": "golang.org/x/tools/go/exact",
-			"Rev": "1330b289ad6d59313d86910fa35d5022cd871e7f"
+			"Rev": "d4a8e583a10c1e702d1accc9e66c104f992115c8"
 		},
 		{
 			"ImportPath": "golang.org/x/tools/go/loader",
-			"Rev": "1330b289ad6d59313d86910fa35d5022cd871e7f"
+			"Rev": "d4a8e583a10c1e702d1accc9e66c104f992115c8"
 		},
 		{
 			"ImportPath": "golang.org/x/tools/go/ssa",
-			"Rev": "1330b289ad6d59313d86910fa35d5022cd871e7f"
+			"Rev": "d4a8e583a10c1e702d1accc9e66c104f992115c8"
 		},
 		{
-			"ImportPath": "golang.org/x/tools/go/types",
-			"Rev": "1330b289ad6d59313d86910fa35d5022cd871e7f"
+			"ImportPath": "golang.org/x/tools/go/ssa/ssautil",
+			"Rev": "d4a8e583a10c1e702d1accc9e66c104f992115c8"
+		},
+		{
+			"ImportPath": "golang.org/x/tools/go/types/typeutil",
+			"Rev": "d4a8e583a10c1e702d1accc9e66c104f992115c8"
 		}
 	]
 }
