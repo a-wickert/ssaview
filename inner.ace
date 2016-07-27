@@ -10,6 +10,9 @@
           div.checkbox
             input type="checkbox" name="ssaType" value="true"
               {{.cbssaType}}
+          div.checkbox
+            input type="checkbox" name="idom" value="true"
+               {{.cbIdom}}  
           input.btn.btn-default type="submit" value={{.scRender}}
           textarea.form-control rows="40" placeholder={{.scPlaceHolder}} name="source"
             {{.sourceCode}}

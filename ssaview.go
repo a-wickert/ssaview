@@ -36,6 +36,7 @@ var content = map[string]string{
 	"ssa":           "Example SSA",
 	"cbFunctions":   "Show Call information",
 	"cbssaType":     "Show SSA type of each instruction",
+	"cbIdom":        "Show Idom of basic block",
 	"functions":     "",
 	"ssatypes":      "",
 }
@@ -94,8 +95,12 @@ func toSSA(source io.Reader, fileName, packageName string, debug bool) ([]byte, 
 		// only iterate if special information are wanted
 		types := content["ssatypes"] == "true"
 		functions := content["functions"] == "true"
-		if types || functions {
+		idom := content["idom"] == "true"
+		if types || functions || idom {
 			for _, block := range bb {
+				if idom {
+					printIdom(block, out)
+				}
 				for _, instr := range block.Instrs {
 					out.WriteString(instr.String() + "\n")
 					if types {
@@ -142,6 +147,8 @@ func handler(w http.ResponseWriter, r *http.Request) {
 
 		content["functions"] = r.PostFormValue("functions")
 		content["ssatypes"] = r.PostFormValue("ssaType")
+		content["idom"] = r.PostFormValue("idom")
+
 		fmt.Printf("functions: " + content["functions"] + " ssaTypes " + content["ssatypes"])
 
 		ssaBytes := bytes.NewBufferString(r.PostFormValue("source"))
@@ -328,5 +335,21 @@ func call(i ssa.Instruction, out *bytes.Buffer) {
 		}
 		out.WriteString(arg.String() + "|")
 	}
+	out.WriteString("\n")
+}
+
+func printIdom(b *ssa.BasicBlock, out *bytes.Buffer) {
+	if b.Index == 0 {
+		out.WriteString("Basic Block has no idom because it is a entry node.")
+		return
+	}
+	if b == b.Parent().Recover {
+		out.WriteString("Basic Block has no idom because it is a recover node")
+		return
+	}
+	out.WriteString("  Idom of ")
+	out.WriteString(strconv.Itoa(b.Index))
+	out.WriteString(" is: ")
+	out.WriteString(strconv.Itoa(b.Idom().Index))
 	out.WriteString("\n")
 }
