@@ -36,8 +36,11 @@ var content = map[string]string{
 	"cbFunctions":   "Show Call information",
 	"cbssaType":     "Show SSA type of each instruction",
 	"cbIdom":        "Show Idom of basic block",
+	"cbSsaBuild":    "Build with the build mode: SanityCheckFunctions",
 	"functions":     "",
 	"ssatypes":      "",
+	"idom":          "",
+	"ssabuild":      "",
 }
 
 func main() {
@@ -53,10 +56,11 @@ func (m members) Less(i, j int) bool { return m[i].Pos() < m[j].Pos() }
 func toSSA(source io.Reader, fileName, packageName string, debug bool) ([]byte, error) {
 	// adopted from saa package example
 
-/*	conf := loader.Config{
+	/*	conf := loader.Config{
 		Build: &build.Default,
 	}*/
 	var conf loader.Config
+	var true = "true"
 
 	file, err := conf.ParseFile(fileName, source)
 	if err != nil {
@@ -69,8 +73,14 @@ func toSSA(source io.Reader, fileName, packageName string, debug bool) ([]byte, 
 	if err != nil {
 		return nil, err
 	}
+	buildsanity := content["ssabuild"] == true
+	var ssaProg *ssa.Program
+	if buildsanity {
+		ssaProg = ssautil.CreateProgram(prog, ssa.SanityCheckFunctions)
+	} else {
+		ssaProg = ssautil.CreateProgram(prog, ssa.NaiveForm)
+	}
 
-	ssaProg := ssautil.CreateProgram(prog, ssa.NaiveForm)
 	ssaProg.Build()
 	mainPkg := ssaProg.Package(prog.InitialPackages()[0].Pkg)
 
@@ -93,9 +103,9 @@ func toSSA(source io.Reader, fileName, packageName string, debug bool) ([]byte, 
 		packageFun := mainPkg.Func(f.Name())
 		bb := packageFun.Blocks
 		// only iterate if special information are wanted
-		types := content["ssatypes"] == "true"
-		functions := content["functions"] == "true"
-		idom := content["idom"] == "true"
+		types := content["ssatypes"] == true
+		functions := content["functions"] == true
+		idom := content["idom"] == true
 		if types || functions || idom {
 			for _, block := range bb {
 				if idom {
@@ -148,6 +158,7 @@ func handler(w http.ResponseWriter, r *http.Request) {
 		content["functions"] = r.PostFormValue("functions")
 		content["ssatypes"] = r.PostFormValue("ssaType")
 		content["idom"] = r.PostFormValue("idom")
+		content["ssabuild"] = r.PostFormValue("ssabuild")
 
 		fmt.Printf("functions: " + content["functions"] + " ssaTypes " + content["ssatypes"])
 
@@ -353,4 +364,3 @@ func printIdom(b *ssa.BasicBlock, out *bytes.Buffer) {
 	out.WriteString(strconv.Itoa(b.Idom().Index))
 	out.WriteString("\n")
 }
-

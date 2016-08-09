@@ -12,7 +12,10 @@
               {{.cbssaType}}
           div.checkbox
             input type="checkbox" name="idom" value="true"
-               {{.cbIdom}}  
+              {{.cbIdom}}
+          div.checkbox
+            input type="checkbox" name="ssabuild" value="true"
+              {{.cbSsaBuild}}
           input.btn.btn-default type="submit" value={{.scRender}}
           textarea.form-control rows="40" placeholder={{.scPlaceHolder}} name="source"
             {{.sourceCode}}
