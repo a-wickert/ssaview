@@ -11,6 +11,7 @@ import (
 	"go/token"
 	"io"
 	"net/http"
+	"os"
 	"sort"
 	"strconv"
 
@@ -45,7 +46,8 @@ var content = map[string]string{
 
 func main() {
 	http.HandleFunc("/", handler)
-	http.ListenAndServe(":8080", nil)
+	port := os.Getenv("PORT")
+	http.ListenAndServe(port, nil)
 }
 
 func (m members) Len() int           { return len(m) }
