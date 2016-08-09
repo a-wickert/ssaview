@@ -2,6 +2,9 @@
 	"ImportPath": "github.com/akwick/ssaview",
 	"GoVersion": "go1.6",
 	"GodepVersion": "v74",
+	"Packages": [
+		"fmt/.."
+	],
 	"Deps": [
 		{
 			"ImportPath": "github.com/yosssi/ace",
