@@ -8,7 +8,6 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"go/build"
 	"go/token"
 	"io"
 	"net/http"
@@ -54,9 +53,10 @@ func (m members) Less(i, j int) bool { return m[i].Pos() < m[j].Pos() }
 func toSSA(source io.Reader, fileName, packageName string, debug bool) ([]byte, error) {
 	// adopted from saa package example
 
-	conf := loader.Config{
+/*	conf := loader.Config{
 		Build: &build.Default,
-	}
+	}*/
+	var conf loader.Config
 
 	file, err := conf.ParseFile(fileName, source)
 	if err != nil {
@@ -70,7 +70,7 @@ func toSSA(source io.Reader, fileName, packageName string, debug bool) ([]byte, 
 		return nil, err
 	}
 
-	ssaProg := ssautil.CreateProgram(prog, ssa.NaiveForm|ssa.BuildSerially)
+	ssaProg := ssautil.CreateProgram(prog, ssa.NaiveForm)
 	ssaProg.Build()
 	mainPkg := ssaProg.Package(prog.InitialPackages()[0].Pkg)
 
@@ -353,3 +353,4 @@ func printIdom(b *ssa.BasicBlock, out *bytes.Buffer) {
 	out.WriteString(strconv.Itoa(b.Idom().Index))
 	out.WriteString("\n")
 }
+
