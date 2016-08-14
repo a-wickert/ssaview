@@ -3,6 +3,7 @@
 
 ssaview is a tool which renders a Go code into the SSA representation.
 A online version is accesible via [heroku](https://powerful-earth-92559.herokuapp.com).
+This project is forked from [tmc](https://github.com/tmc/ssaview).
 
 It is possible to add some additional information like the type of each instruction and the idoms of each basic block to the SSA representation via a checkbox.
 An other possibility is that the build mode of the SSA can be changed from the standard mode to the SanityCheckFunctions mode.
