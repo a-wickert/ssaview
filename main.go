@@ -66,9 +66,6 @@ func (m members) Less(i, j int) bool { return m[i].Pos() < m[j].Pos() }
 func toSSA(source io.Reader, fileName, packageName string, debug bool) ([]byte, error) {
 	// adopted from saa package example
 
-	/*	conf := loader.Config{
-		Build: &build.Default,
-	}*/
 	var conf loader.Config
 	var true = "true"
 
@@ -154,13 +151,12 @@ func writeJSON(w http.ResponseWriter, data interface{}) error {
 
 func handler(w http.ResponseWriter, r *http.Request) {
 	tpl, err := ace.Load("base", "inner", nil)
-	fmt.Printf("tpl == nil %t | err == nil %t", tpl == nil, err == nil)
 	if err != nil {
 		fmt.Printf("error %s", err.Error())
 	}
 	handleError(err, w)
 
-	// Regenerate the SSA representation
+	// Generate the SSA representation
 	if r.Method == "POST" {
 		err = r.ParseForm()
 		handleError(err, w)
@@ -169,8 +165,6 @@ func handler(w http.ResponseWriter, r *http.Request) {
 		content["ssatypes"] = r.PostFormValue("ssaType")
 		content["idom"] = r.PostFormValue("idom")
 		content["ssabuild"] = r.PostFormValue("ssabuild")
-
-		fmt.Printf("functions: " + content["functions"] + " ssaTypes " + content["ssatypes"])
 
 		ssaBytes := bytes.NewBufferString(r.PostFormValue("source"))
 		var ssa []byte
