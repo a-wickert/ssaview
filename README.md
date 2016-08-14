@@ -15,8 +15,8 @@ It is possible to change the port by setting the environment variable e.g:
 License: ISC
 
 ```sh
-  $ go get github.com/a-wickert/ssaview
-  $ go install github.com/a-wickert/ssaview
+  $ go get github.com/akwick/ssaview
+  $ go install github.com/akwick/ssaview
   $ Optional: which ssaview should show you: $GOPATH/bin/ssaview
   $ ssaview &
   open localhost:8080
