@@ -1,9 +1,16 @@
 #ssaview
 -------
 
-ssaview is a small utlity that renders SSA code alongside input Go code
+ssaview is a tool which renders a Go code into the SSA representation.
+A online version is accesible via [heroku]:https://powerful-earth-92559.herokuapp.com/.
 
-Runs via HTTP on :8080
+It is possible to add some additional information like the type of each instruction and the idoms of each basic block to the SSA representation via a checkbox.
+An other possibility is that the build mode of the SSA can be changed from the standard mode to the SanityCheckFunctions mode.
+
+The application starts on the port of the environment variable PORT. 
+If the variable is not set, the application start on port 8080. 
+It is possible to change the port by setting the environment variable e.g:
+'$ export PORT=8080 ' 
 
 License: ISC
 
@@ -24,4 +31,4 @@ Screenshot:
 - [ ] Fix that the stuff is shown twice
 - [ ] Show error messages
 - [ ] Show value of checkbox after rendering
-- [ ] Provide heroku link
+- [x] Provide heroku link
