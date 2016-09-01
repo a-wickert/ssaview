@@ -10,7 +10,6 @@ import (
 	"fmt"
 	"go/token"
 	"io"
-	"log"
 	"net/http"
 	"os"
 	"sort"
@@ -33,13 +32,14 @@ type Cb struct {
 }
 
 var content = map[string]interface{}{
-	"Expl":          "Converts a valid go source file into the golang represenation.",
+	"Expl":          "Converts a valid go source file into the SSA represenation.",
 	"scPlaceHolder": "Enter a pure go program without errors.",
 	"sch3":          "Source Code",
 	"scRender":      "Render source code",
 	"sc":            "Source Code",
 	"ssah3":         "SSA representation",
 	"ssa":           "Example SSA",
+	"pagename":      "SSA view",
 	"cbs": []Cb{
 		Cb{"Show call information", "functions", false},
 		Cb{"Show SSA type of each instruction", "ssaType", false},
@@ -178,7 +178,6 @@ func handler(w http.ResponseWriter, r *http.Request) {
 				cbs[i].Checked = false
 			}
 		}
-		log.Printf("%v\n", content["cbs"])
 
 		ssaBytes := bytes.NewBufferString(r.PostFormValue("source"))
 		var ssa []byte

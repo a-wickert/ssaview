@@ -34,3 +34,4 @@ Screenshot:
 - [x] Show value of checkbox after rendering
 - [x] Provide heroku link
 - [ ] Update Screenshot
+- [ ] Add a better discription about the program
