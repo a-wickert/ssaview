@@ -29,7 +29,8 @@ Screenshot:
 ## TODO
 
 - [x] Logging not via fmt
-- [ ] Fix that the stuff is shown twice
+- [x] Fix that the stuff is shown twice
 - [ ] Show error messages
-- [ ] Show value of checkbox after rendering
+- [x] Show value of checkbox after rendering
 - [x] Provide heroku link
+- [ ] Update Screenshot

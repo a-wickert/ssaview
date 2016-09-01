@@ -1,0 +1,8 @@
+div.checkbox
+{{if .Checked}}
+  input type="checkbox" name={{.Name}} value="true" checked="checked"
+    {{.Description}}
+{{else}}
+  input type="checkbox" name={{.Name}} value="true"
+    {{.Description}}
+{{end}}

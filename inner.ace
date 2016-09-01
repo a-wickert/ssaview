@@ -4,18 +4,9 @@
       div.col-sm-6
         h3 {{.sch3}}
         form#source action="/" method="post"
-          div.checkbox
-            input type="checkbox" name="functions" value="true"
-              {{.cbFunctions}}
-          div.checkbox
-            input type="checkbox" name="ssaType" value="true"
-              {{.cbssaType}}
-          div.checkbox
-            input type="checkbox" name="idom" value="true"
-              {{.cbIdom}}
-          div.checkbox
-            input type="checkbox" name="ssabuild" value="true"
-              {{.cbSsaBuild}}
+          {{range .cbs}}
+            = include cb .
+          {{end}}
           input.btn.btn-default type="submit" value={{.scRender}}
           textarea.form-control rows="40" placeholder={{.scPlaceHolder}} name="source"
             {{.sourceCode}}

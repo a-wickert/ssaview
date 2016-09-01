@@ -10,6 +10,7 @@ import (
 	"fmt"
 	"go/token"
 	"io"
+	"log"
 	"net/http"
 	"os"
 	"sort"
@@ -25,8 +26,13 @@ import (
 const indexPage = "index.html"
 
 type members []ssa.Member
+type Cb struct {
+	Description string
+	Name        string
+	Checked     bool
+}
 
-var content = map[string]string{
+var content = map[string]interface{}{
 	"Expl":          "Converts a valid go source file into the golang represenation.",
 	"scPlaceHolder": "Enter a pure go program without errors.",
 	"sch3":          "Source Code",
@@ -34,17 +40,16 @@ var content = map[string]string{
 	"sc":            "Source Code",
 	"ssah3":         "SSA representation",
 	"ssa":           "Example SSA",
-	"cbFunctions":   "Show Call information",
-	"cbssaType":     "Show SSA type of each instruction",
-	"cbIdom":        "Show Idom of basic block",
-	"cbSsaBuild":    "Build with the build mode: SanityCheckFunctions",
-	"functions":     "",
-	"ssatypes":      "",
-	"idom":          "",
-	"ssabuild":      "",
+	"cbs": []Cb{
+		Cb{"Show call information", "functions", false},
+		Cb{"Show SSA type of each instruction", "ssaType", false},
+		Cb{"Show Idom of each basic block", "idom", false},
+		Cb{"Build with the build mode: SanityCheckFunctions", "ssabuild", true},
+	},
 }
 
 func main() {
+
 	http.HandleFunc("/", handler)
 	port := os.Getenv("PORT")
 	if port == "" {
@@ -110,7 +115,7 @@ func toSSA(source io.Reader, fileName, packageName string, debug bool) ([]byte, 
 		packageFun := mainPkg.Func(f.Name())
 		bb := packageFun.Blocks
 		// only iterate if special information are wanted
-		types := content["ssatypes"] == true
+		types := content["ssaType"] == true
 		functions := content["functions"] == true
 		idom := content["idom"] == true
 		if types || functions || idom {
@@ -161,10 +166,19 @@ func handler(w http.ResponseWriter, r *http.Request) {
 		err = r.ParseForm()
 		handleError(err, w)
 
-		content["functions"] = r.PostFormValue("functions")
-		content["ssatypes"] = r.PostFormValue("ssaType")
-		content["idom"] = r.PostFormValue("idom")
-		content["ssabuild"] = r.PostFormValue("ssabuild")
+		// Iterate over the checkboxes
+		// content[cb.Name] is used in the toSSA algorithm
+		cbs := content["cbs"].([]Cb)
+		for i, cb := range cbs {
+			if r.PostFormValue(cb.Name) == "true" {
+				content[cb.Name] = "true"
+				cbs[i].Checked = true
+			} else {
+				content[cb.Name] = "false"
+				cbs[i].Checked = false
+			}
+		}
+		log.Printf("%v\n", content["cbs"])
 
 		ssaBytes := bytes.NewBufferString(r.PostFormValue("source"))
 		var ssa []byte
@@ -172,8 +186,6 @@ func handler(w http.ResponseWriter, r *http.Request) {
 		handleError(err, w)
 		content["sourceCode"] = r.PostFormValue("source")
 		content["ssa"] = string(ssa)
-		err = tpl.Execute(w, content)
-		handleError(err, w)
 	}
 
 	err = tpl.Execute(w, content)
