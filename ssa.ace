@@ -1,0 +1,45 @@
+div.panel-group.container
+  ul.list-group
+  {{with .ssa.Funcs}}
+    {{range .}}
+      li
+        {{$name := .Name}}
+        a.btn.btn-primary data-toggle="collapse" href="#{{$name}}" {{.Name}}
+          div.collapse#{{$name}}
+            ul.list-group
+              li.list-group-item Params
+                span.badge {{len .Params}}
+              div#collParams.panel-collapse.collapse
+                ul.list-group
+                  {{range .Params}}
+                  li.list-group-item {{.}}
+                  {{end}}
+              li.list-group-item FreeVars
+                span.badge {{len .FreeVars}}
+                ul.list-group
+                  {{range .FreeVars}}
+                  li.list-group-item {{.}}
+                  {{end}}
+              li.list-group-item Locals
+                span.badge {{len .Locals}}
+                ul.list-group
+                  {{range .Locals}}
+                  li.list-group-item {{.}}
+                  {{end}}
+              li.list-group-item Blocks
+                span.badge {{len .Blocks}}
+                ul.list-group
+                  {{with .Blocks}}
+                    {{range .}}
+                    li.list-group-item {{.Index}}
+                      span.badge {{len .Instrs}}
+                      ul.list-group
+                        {{range .Instrs}}
+                        li.list-group-item {{.Name}}
+                          ul.list-group
+                            li.list-group-item {{.Type}}
+                          {{end}}
+                    {{end}}
+                  {{end}}
+    {{end}}
+  {{end}}

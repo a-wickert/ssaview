@@ -13,4 +13,4 @@
       div.col-sm-6
         h3 {{.ssah3}}
         pre#ssa
-          {{.ssa}}
+          = include ssa .  

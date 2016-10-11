@@ -12,7 +12,7 @@ import (
 	"io"
 	"net/http"
 	"os"
-	"sort"
+	"reflect"
 	"strconv"
 
 	"golang.org/x/tools/go/loader"
@@ -23,12 +23,42 @@ import (
 )
 
 const indexPage = "index.html"
+const stdPort = "8080"
 
 type members []ssa.Member
 type Cb struct {
 	Description string
 	Name        string
 	Checked     bool
+}
+
+type SSA struct {
+	Funcs []Func
+}
+type Func struct {
+	Name     string
+	Params   []Value
+	FreeVars []Value
+	Locals   []Value
+	Blocks   []BB
+	//	AnonFuncs []Func
+}
+
+type Instr struct {
+	Name string
+	Type string
+}
+
+type Value struct {
+	Name string
+	Type string
+}
+
+type BB struct {
+	Index  int
+	Instrs []Instr
+	Preds  []int
+	Succs  []int
 }
 
 var content = map[string]interface{}{
@@ -38,11 +68,11 @@ var content = map[string]interface{}{
 	"scRender":      "Render source code",
 	"sc":            "Source Code",
 	"ssah3":         "SSA representation",
-	"ssa":           "Example SSA",
-	"pagename":      "SSA view",
+	//"ssa":           "Example SSA",
+	"pagename": "SSA view",
 	"cbs": []Cb{
 		Cb{"Show call information", "functions", false},
-		Cb{"Show SSA type of each instruction", "ssaType", false},
+		//		Cb{"Show SSA type of each instruction", "ssaType", false},
 		Cb{"Show Idom of each basic block", "idom", false},
 		Cb{"Build with the build mode: SanityCheckFunctions", "ssabuild", true},
 	},
@@ -53,8 +83,8 @@ func main() {
 	http.HandleFunc("/", handler)
 	port := os.Getenv("PORT")
 	if port == "" {
-		port = "8080"
-		fmt.Println("INFO: Port environment variable is not set. Use 8080")
+		port = stdPort
+		fmt.Printf("INFO: Port environment variable is not set. Use port %s", port)
 	}
 	port = ":" + port
 	err := http.ListenAndServe(port, nil)
@@ -68,7 +98,7 @@ func (m members) Swap(i, j int)      { m[i], m[j] = m[j], m[i] }
 func (m members) Less(i, j int) bool { return m[i].Pos() < m[j].Pos() }
 
 // toSSA converts go source to SSA
-func toSSA(source io.Reader, fileName, packageName string, debug bool) ([]byte, error) {
+/*func toSSA(source io.Reader, fileName, packageName string, debug bool) ([]byte, error) {
 	// adopted from saa package example
 
 	var conf loader.Config
@@ -138,6 +168,72 @@ func toSSA(source io.Reader, fileName, packageName string, debug bool) ([]byte, 
 
 	return out.Bytes(), nil
 }
+*/
+
+func toSSA(src io.Reader, file, pkg string) (SSA, error) {
+	var fs []Func
+	var conf loader.Config
+
+	// Parse the file into a ssa file
+	f, _ := conf.ParseFile(file, src)
+	conf.CreateFromFiles("main.go", f)
+	p, _ := conf.Load()
+	buildsanity := content["ssabuild"] == true
+	var ssap *ssa.Program
+	if buildsanity {
+		ssap = ssautil.CreateProgram(p, ssa.SanityCheckFunctions)
+	} else {
+		ssap = ssautil.CreateProgram(p, ssa.NaiveForm)
+	}
+
+	// Build ssa prog to retrieve all information and the main pkg
+	ssap.Build()
+	mainpkg := ssap.Package(p.InitialPackages()[0].Pkg)
+
+	for _, m := range mainpkg.Members {
+		if m.Token() == token.FUNC {
+			f, ok := m.(*ssa.Function)
+			if ok {
+				var params []Value
+				for _, p := range f.Params {
+					v := Value{p.Name(), reflect.TypeOf(p).String()}
+					params = append(params, v)
+				}
+				var freevars []Value
+				for _, fv := range f.FreeVars {
+					v := Value{fv.Name(), reflect.TypeOf(fv).String()}
+					freevars = append(freevars, v)
+				}
+				var locals []Value
+				for _, l := range f.Locals {
+					v := Value{l.Name(), reflect.TypeOf(l).String()}
+					locals = append(locals, v)
+				}
+				var blocks []BB
+				for _, b := range f.Blocks {
+					var instrs []Instr
+					for _, i := range b.Instrs {
+						in := Instr{i.String(), reflect.TypeOf(i).String()}
+						instrs = append(instrs, in)
+					}
+					var preds []int
+					for _, p := range b.Preds {
+						preds = append(preds, p.Index)
+					}
+					var succs []int
+					for _, s := range b.Succs {
+						succs = append(succs, s.Index)
+					}
+					bb := BB{b.Index, instrs, preds, succs}
+					blocks = append(blocks, bb)
+				}
+				fn := Func{f.Name(), params, freevars, locals, blocks}
+				fs = append(fs, fn)
+			}
+		}
+	}
+	return SSA{fs}, nil
+}
 
 // writeJSON attempts to serialize data and write it to w
 // On error it will write an HTTP status of 400
@@ -180,11 +276,10 @@ func handler(w http.ResponseWriter, r *http.Request) {
 		}
 
 		ssaBytes := bytes.NewBufferString(r.PostFormValue("source"))
-		var ssa []byte
-		ssa, err = toSSA(ssaBytes, "main.go", "main", false)
+		ssafs, err := toSSA(ssaBytes, "main.go", "main")
 		handleError(err, w)
 		content["sourceCode"] = r.PostFormValue("source")
-		content["ssa"] = string(ssa)
+		content["ssa"] = ssafs
 	}
 
 	err = tpl.Execute(w, content)
