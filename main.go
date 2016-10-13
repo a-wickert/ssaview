@@ -38,9 +38,13 @@ type SSA struct {
 type Func struct {
 	Name     string
 	Params   []Value
+	PString  string
 	FreeVars []Value
+	FString  string
 	Locals   []Value
+	LString  string
 	Blocks   []BB
+	BString  string
 	//	AnonFuncs []Func
 }
 
@@ -227,7 +231,7 @@ func toSSA(src io.Reader, file, pkg string) (SSA, error) {
 					bb := BB{b.Index, instrs, preds, succs}
 					blocks = append(blocks, bb)
 				}
-				fn := Func{f.Name(), params, freevars, locals, blocks}
+				fn := Func{f.Name(), params, "par_" + f.Name(), freevars, "freevars_" + f.Name(), locals, "locals_" + f.Name(), blocks, "blocks_" + f.Name()}
 				fs = append(fs, fn)
 			}
 		}

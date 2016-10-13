@@ -2,24 +2,29 @@ div.panel-group.container
   ul.list-group
   {{with .ssa.Funcs}}
     {{range .}}
+      {{$name := .Name}}
       li
-        {{$name := .Name}}
         a.btn.btn-primary data-toggle="collapse" href="#{{$name}}" {{.Name}}
           div.collapse#{{$name}}
             ul.list-group
-              li.list-group-item Params
-                span.badge {{len .Params}}
-              div#collParams.panel-collapse.collapse
-                ul.list-group
-                  {{range .Params}}
-                  li.list-group-item {{.}}
-                  {{end}}
-              li.list-group-item FreeVars
-                span.badge {{len .FreeVars}}
-                ul.list-group
-                  {{range .FreeVars}}
-                  li.list-group-item {{.}}
-                  {{end}}
+              {{$p := .PString}}
+              li.list-group-item
+                a.btn.btn-primary data-toggle="collapse" href="#{{$p}}" Params
+                  span.badge {{len .Params}}
+                  div.collapse#{{$p}}
+                    ul.list-group
+                      {{range .Params}}
+                      li.list-group-item {{.}}
+                      {{end}}
+              {{$f := .FString}}
+              li.list-group-item
+                a.btn.btn-primary data-toggle="collapse" href="#{{$f}}" FreeVars
+                  span.badge {{len .FreeVars}}
+                  div.collapse#{{$f}}
+                    ul.list-group
+                      {{range .FreeVars}}
+                      li.list-group-item {{.}}
+                      {{end}}
               li.list-group-item Locals
                 span.badge {{len .Locals}}
                 ul.list-group
